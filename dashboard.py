@@ -1,10 +1,10 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import folium
+import os
 from streamlit.components.v1 import html
 
 st.title('COVID-19 Therapeutic Locator')
 
+# Data Source Section
 st.header("Data source")
 st.write("""
 HealthData.gov is the U.S. government's open data platform, managed by the Department of Health and 
@@ -23,43 +23,51 @@ By leveraging these datasets, users can gain insights into various health trends
 contributing to a more informed and healthier society.
 """)
 
-#1. Top Metrics Section
+# Function to Display Images with Error Handling
+def display_image(image_path, alt_text):
+    if os.path.exists(image_path):
+        st.image(image_path)
+    else:
+        st.error(f"Image not found: {alt_text}")
+
+# Function to Display Maps with Error Handling
+def display_map(map_path):
+    if os.path.exists(map_path):
+        with open(map_path, 'r', encoding='utf-8') as f:
+            map_html = f.read()
+        html(map_html, height=600)
+    else:
+        st.error("Map file not found. Please check the file path.")
+
+# 1. Top Metrics Section
 st.header("Top Metrics")
-st.write("Total Sites: 65468")
-st.write("ICATT sites: 26")
-st.write("Home Delivery Sites: 325")
-st.write("Prescribing Services Available: 534")
+st.write("- **Total Sites:** 65,468")
+st.write("- **ICATT Sites:** 26")
+st.write("- **Home Delivery Sites:** 325")
+st.write("- **Prescribing Services Available:** 534")
 
-#2. Medication Availability
+# 2. Medication Availability
 st.header("Medication Availability")
-st.image("data/images/medication_availability.png")
+display_image("data/images/medication_availability.png", "Medication Availability Image")
 
-#3. Service Accessibility Pie chart
+# 3. Service Accessibility Pie Chart
 st.header("Service Availability")
-st.image("data/images/service_availability.png")
+display_image("data/images/service_availability.png", "Service Availability Image")
 
-#4. Change in proportion of over time
-st.header("Proportion of active sites")
-st.image("data/images/closed_sites.png")
+# 4. Change in Proportion Over Time
+st.header("Proportion of Active Sites")
+display_image("data/images/closed_sites.png", "Proportion of Active Sites Over Time Image")
 
-
-#5.Medication availability over time
+# 5. Medication Availability Over Time
 st.header("Medication Availability Over Time")
-st.image("data/images/medication_availability_over_time.png")
+display_image("data/images/medication_availability_over_time.png", "Medication Availability Over Time Image")
 
-#6.Number of medication sites
+# 6. Number of Medication Sites
 st.header("States with Medication Sites")
-st.image("data/images/number_of_treatment_sites.png")
+display_image("data/images/number_of_treatment_sites.png", "Number of Treatment Sites Image")
 
-#7. Geospatial Analysis: Interactive Map
-map_file = "data/geospatial_data/medication_sites_map_with_dropdown.html"
-
-with open(map_file, 'r', encoding='utf-8') as f:
-    map_html = f.read()
-    
-st.title("Interactive Medication Sites Map")
-st.write("Explore the distribution of treatment sites on the map.\nUse the dropdown menu on the right corner to choose the treatment site")
+# 7. Geospatial Analysis: Interactive Map
+st.header("Interactive Medication Sites Map")
+st.write("Explore the distribution of treatment sites on the map. Use the dropdown menu on the right corner to choose the treatment site.")
 st.write("To see the address of the treatment site, click on the treatment site point.")
-st.write("")
-
-html(map_html, height=600)
+display_map("data/geospatial_data/medication_sites_map_with_dropdown.html")
